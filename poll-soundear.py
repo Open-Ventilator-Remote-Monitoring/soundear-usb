@@ -21,11 +21,12 @@ try:
 
     h = hid.device()
     h.open(VENDOR_ID, PRODUCT_ID) # Soundear
-    '''
+
     print("Manufacturer: %s" % h.get_manufacturer_string())
     #print("Product: %s" % h.get_product_string())
     print("Serial No: %s" % h.get_serial_number_string())
-    '''
+    print()
+
     # enable non-blocking mode
     h.set_nonblocking(1)
 
