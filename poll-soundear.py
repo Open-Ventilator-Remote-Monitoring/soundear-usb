@@ -2,6 +2,20 @@ import hid
 import time
 import struct
 
+def decode_bytes(byte_1, byte_2, byte_3, byte_4):
+    byte_1_hex = hex(byte_1) 
+    byte_2_hex = hex(byte_2) 
+    byte_3_hex = hex(byte_3)
+    byte_4_hex = hex(byte_4)
+
+    bytes_reversed_and_concatenated = byte_4*(16**6) + byte_3*(16**4) + byte_2*(16**2) + byte_1
+
+    bytes_hex = hex(bytes_reversed_and_concatenated)[2:]
+
+    bytes_decimal = str(round(struct.unpack('!f', bytes.fromhex(bytes_hex))[0], 1))
+
+    return bytes_decimal
+
 VENDOR_ID = 3095
 PRODUCT_ID = 2305
 
@@ -73,7 +87,12 @@ try:
             dBAslow_decimal = str(round(struct.unpack('!f', bytes.fromhex(dBAslow_hex))[0], 1))
             timestamp = str(d[23]) + ":" + str(d[24]) + ":" + str(d[25]) + " "  + str(d[21]) + "-" + str(d[22]) + "-20" + str(d[20])
 
-            print("db(A)slow= " + dBAslow_decimal + ", Timestamp= " + timestamp, end='\r', flush=True)
+            decoded_bytes = decode_bytes(d[12], d[13], d[14], d[15])
+
+            #print("db(A)slow= " + dBAslow_decimal + ", Timestamp= " + timestamp, end='\r', flush=True)
+            print("db(A)slow= " + dBAslow_decimal + ", Timestamp= " + timestamp)
+            print("decoded_bytes= " + str(decoded_bytes))
+            print()
 
             time.sleep(1)
 
@@ -98,3 +117,4 @@ except IOError as ex:
 #print('Connected to Soundear:' + str(PRODUCT_ID))
 
 #device.close()
+
