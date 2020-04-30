@@ -3,11 +3,6 @@ import time
 import struct
 
 def decode_bytes(byte_1, byte_2, byte_3, byte_4):
-    byte_1_hex = hex(byte_1) 
-    byte_2_hex = hex(byte_2) 
-    byte_3_hex = hex(byte_3)
-    byte_4_hex = hex(byte_4)
-
     bytes_reversed_and_concatenated = byte_4*(16**6) + byte_3*(16**4) + byte_2*(16**2) + byte_1
 
     bytes_hex = hex(bytes_reversed_and_concatenated)[2:]
@@ -15,6 +10,7 @@ def decode_bytes(byte_1, byte_2, byte_3, byte_4):
     bytes_decimal = str(round(struct.unpack('!f', bytes.fromhex(bytes_hex))[0], 1))
 
     return bytes_decimal
+
 
 VENDOR_ID = 3095
 PRODUCT_ID = 2305
@@ -58,41 +54,16 @@ try:
         if d:
             #print(d)
 
-            dBA_slow_byte_1 = d[12] # sample value = 22
-            dBA_slow_byte_2 = d[13] # sample value = 101
-            dBA_slow_byte_3 = d[14] # sample value = 64
-            dBA_slow_byte_4 = d[15] # sample value = 66
-
-            #print("dB(A)slow byte 1= " + str(dBA_slow_byte_1))
-            #print("dB(A)slow byte 2= " + str(dBA_slow_byte_2))
-            #print("dB(A)slow byte 3= " + str(dBA_slow_byte_3))
-            #print("dB(A)slow byte 4= " + str(dBA_slow_byte_4))
-
-            dBA_slow_byte_1_hex = hex(dBA_slow_byte_1) 
-            dBA_slow_byte_2_hex = hex(dBA_slow_byte_2) 
-            dBA_slow_byte_3_hex = hex(dBA_slow_byte_3)
-            dBA_slow_byte_4_hex = hex(dBA_slow_byte_4)
-
-            #print("dB(A)slow byte 1 hex= " + str(dBA_slow_byte_1_hex)) # sample value = 16
-            #print("dB(A)slow byte 2 hex= " + str(dBA_slow_byte_2_hex)) # sample value = 65
-            #print("dB(A)slow byte 3 hex= " + str(dBA_slow_byte_3_hex)) # sample value = 40
-            #print("dB(A)slow byte 4 hex= " + str(dBA_slow_byte_4_hex)) # sample value = 42
-
-            dBAslow = dBA_slow_byte_4*(16**6) + dBA_slow_byte_3*(16**4) + dBA_slow_byte_2*(16**2) + dBA_slow_byte_1
-
-            dBAslow_hex = hex(dBAslow)[2:]
-
-            #print("dB(A)slow hex= " + str(dBAslow_hex)) # sample value = 42406516
-
-            dBAslow_decimal = str(round(struct.unpack('!f', bytes.fromhex(dBAslow_hex))[0], 1))
             timestamp = str(d[23]) + ":" + str(d[24]) + ":" + str(d[25]) + " "  + str(d[21]) + "-" + str(d[22]) + "-20" + str(d[20])
 
-            decoded_bytes = decode_bytes(d[12], d[13], d[14], d[15])
+            dBAslow = decode_bytes(d[12], d[13], d[14], d[15])
+            Laeq1s = decode_bytes(d[8], d[9], d[10], d[11])
+            dBAfast = decode_bytes(d[4], d[5], d[6], d[7])
+            LCpeak = decode_bytes(d[16], d[17], d[18], d[19])
+            dBCfast = decode_bytes(d[28], d[29], d[30], d[31])
+            dBCslow = decode_bytes(d[32], d[33], d[34], d[35])
 
-            #print("db(A)slow= " + dBAslow_decimal + ", Timestamp= " + timestamp, end='\r', flush=True)
-            print("db(A)slow= " + dBAslow_decimal + ", Timestamp= " + timestamp)
-            print("decoded_bytes= " + str(decoded_bytes))
-            print()
+            print("db(A)slow= " + dBAslow + ", db(A)fast= " + dBAfast + ", Laeq,1s= " + Laeq1s + ", LCpeak= " + LCpeak + ", dB(C)fast= " + dBCfast + ", dB(C)slow= " + dBCslow  + ", Timestamp= " + timestamp, end='\r', flush=True)
 
             time.sleep(1)
 
